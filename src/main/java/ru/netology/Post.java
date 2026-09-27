@@ -4,6 +4,7 @@ public class Post {
     private long id;
     private String title;
     private String content;
+    private boolean deleted;
 
     public Post() {
     }
@@ -36,5 +37,13 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

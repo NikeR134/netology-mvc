@@ -12,11 +12,25 @@ public class PostRepository {
     private final AtomicLong nextId = new AtomicLong(0);
 
     public List<Post> all() {
-        return new ArrayList<>(posts.values());
+        List<Post> result = new ArrayList<>();
+
+        for (Post post : posts.values()) {
+            if (!post.isDeleted()) {
+                result.add(post);
+            }
+        }
+
+        return result;
     }
 
     public Post getById(long id) {
-        return posts.get(id);
+        Post post = posts.get(id);
+
+        if (post == null || post.isDeleted()) {
+            return null;
+        }
+
+        return post;
     }
 
     public synchronized Post save(Post post) {
@@ -27,7 +41,9 @@ public class PostRepository {
             return created;
         }
 
-        if (!posts.containsKey(post.getId())) {
+        Post existing = posts.get(post.getId());
+
+        if (existing == null || existing.isDeleted()) {
             throw new IllegalArgumentException(
                 "Post with id=" + post.getId() + " not found"
             );
@@ -44,6 +60,13 @@ public class PostRepository {
     }
 
     public boolean removeById(long id) {
-        return posts.remove(id) != null;
+        Post post = posts.get(id);
+
+        if (post == null || post.isDeleted()) {
+            return false;
+        }
+
+        post.setDeleted(true);
+        return true;
     }
 }
